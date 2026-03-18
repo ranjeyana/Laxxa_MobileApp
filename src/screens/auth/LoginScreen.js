@@ -12,12 +12,10 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { SimpleLineIcons, MaterialCommunityIcons } from '@expo/vector-icons';
 
-// Get screen dimensions
 const { width, height } = Dimensions.get('window');
 
-// Responsive scaling functions
 const scale = (size) => {
-  const guidelineBaseWidth = 375; // iPhone X/11 Pro width
+  const guidelineBaseWidth = 375; 
   return (width / guidelineBaseWidth) * size;
 };
 
@@ -25,19 +23,14 @@ const moderateScale = (size, factor = 0.5) => {
   return size + (scale(size) - size) * factor;
 };
 
-// Font scaling function (to prevent text from getting too large on tablets)
-const fontScale = (size) => {
-  const scaleFactor = Math.min(width / 375, 1.2); // Max 20% larger on big screens
-  return size * scaleFactor;
-};
 
-const LoginScreen = () => {
+const LoginScreen = ({navigation}) => {
   const backgroundImage = require('../../../assets/images/loginScreen_bg.png');
   const logoImage = require('../../../assets/images/Laxxa.png');
   const googleLogo = require('../../../assets/logo/google_logo.png');
 
   const handlePhoneLogin = () => {
-    Alert.alert('Phone Login', 'Phone login would open here');
+    navigation.navigate('PhoneLogin')
   };
 
   const handleGoogleLogin = () => {
@@ -45,7 +38,7 @@ const LoginScreen = () => {
   };
 
   const handleEmailLogin = () => {
-    Alert.alert('Email Login', 'Email login would open here');
+    navigation.navigate('EmailLogin')
   };
 
   const handleTerms = () => {

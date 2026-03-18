@@ -1,25 +1,16 @@
-export default {
-  primary: '#007AFF',
-  secondary: '#5856D6',
-  success: '#34C759',
-  danger: '#FF3B30',
-  warning: '#FF9500',
-  info: '#5AC8FA',
-  
-  // Background colors
+export const colors = {
+  primary: '#FF6B6B', 
+  secondary: '#4ECDC4',
   background: '#FFFFFF',
-  backgroundSecondary: '#F2F2F7',
+  white: '#FFFFFF',
+  black: '#000000',
+  primaryText: '#2D3436',
+  secondaryText: '#636E72',
+  placeholder: '#B2BEC3',
+  border: '#DFE6E9',
+  error: '#D63031',
+  success: '#00B894',
+  warning: '#FDCB6E',
   
-  // Text colors
-  text: '#000000',
-  textSecondary: '#8E8E93',
-  textMuted: '#C7C7CC',
-  
-  // Border colors
-  border: '#C6C6C8',
-  borderLight: '#E5E5EA',
-  
-  // Social colors
-  facebook: '#1877F2',
-  google: '#DB4437',
+  // Add any additional colors you need
 };
