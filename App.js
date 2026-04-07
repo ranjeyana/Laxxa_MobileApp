@@ -8,6 +8,7 @@ import LoginScreen from './src/screens/auth/LoginScreen';
 import PhoneLoginScreen from './src/screens/auth/PhoneLoginScreen';
 import EmailLoginScreen from './src/screens/auth/EmailLoginScreen';
 import HomeScreen from './src/screens/main/HomeScreen';
+import WishlistScreen from './src/screens/main/WishlistScreen';
 
 const Stack = createStackNavigator();
 
@@ -19,6 +20,9 @@ export default function App() {
       await Font.loadAsync({
         'Monrope-Regular': require('./assets/fonts/Manrope-Regular.ttf'),
         'Monrope-Medium': require('./assets/fonts/Manrope-Medium.ttf'),
+        'Monrope-SemiBold': require('./assets/fonts/Manrope-SemiBold.ttf'),
+        'Monrope-Bold': require('./assets/fonts/Manrope-Bold.ttf'),
+        'Inter-Semibold': require('./assets/fonts/inter/Inter_28pt-SemiBold.ttf'),
       });
       setFontsLoaded(true);
     }
@@ -56,6 +60,7 @@ export default function App() {
           component={OTPVerificationScreen} 
         /> */}
         <Stack.Screen name="Home" component={HomeScreen}/>
+        <Stack.Screen name="WishList" component={WishlistScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef , useEffect} from 'react';
 import {
   View,
   Text,
@@ -13,10 +13,15 @@ import {
   FlatList,
   Dimensions,
   ImageBackground,
+  Animated
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Feather, MaterialIcons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 import { BlurView } from 'expo-blur';
+import CurvedArrowLeft from '../../../assets/images/home/curved_arrow_left.svg';
+import CurvedArrowRight from '../../../assets/images/home/curved_arrow_right.svg';
+
 
 const { width, height } = Dimensions.get('window');
 
@@ -25,13 +30,16 @@ const HomeScreen = ({ navigation }) => {
   const [searchText, setSearchText] = useState('');
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
   const flatListRef = useRef(null);
+
+   const fadeAnim = useRef(new Animated.Value(1)).current;
+  const slideAnim = useRef(new Animated.Value(0)).current;
   
   const logoImage = require('../../../assets/images/Laxxa - Black.png');
 
   const sliderImages = [
     { id: '1', image: require('../../../assets/images/home/slide-1.png') },
-    { id: '2', image: require('../../../assets/images/home/slide-2.jpg') },
-    { id: '3', image: require('../../../assets/images/home/slide-3.jpg') },
+    { id: '2', image: require('../../../assets/images/home/slide-2.png') },
+    { id: '3', image: require('../../../assets/images/home/slide-3 (2).jpg') },
   ];
 
   const trendingItems = [
@@ -131,6 +139,46 @@ const HomeScreen = ({ navigation }) => {
     { name: 'Profile', ...tabIcons.Profile },
   ];
 
+    useEffect(() => {
+    const interval = setInterval(() => {
+      // Fade out
+      Animated.parallel([
+        Animated.timing(fadeAnim, {
+          toValue: 0,
+          duration: 500,
+          useNativeDriver: true,
+        }),
+        Animated.timing(slideAnim, {
+          toValue: -20,
+          duration: 500,
+          useNativeDriver: true,
+        }),
+      ]).start(() => {
+        // Change image
+        setCurrentSlideIndex((prevIndex) => 
+          prevIndex === sliderImages.length - 1 ? 0 : prevIndex + 1
+        );
+        
+        // Fade in
+        Animated.parallel([
+          Animated.timing(fadeAnim, {
+            toValue: 1,
+            duration: 500,
+            useNativeDriver: true,
+          }),
+          Animated.timing(slideAnim, {
+            toValue: 0,
+            duration: 500,
+            useNativeDriver: true,
+          }),
+        ]).start();
+      });
+    }, 4000); // Change every 4 seconds
+
+    return () => clearInterval(interval);
+  }, [sliderImages.length]);
+
+
   const handleCalendarPress = () => {
     Alert.alert('Calendar', 'Calendar would open here');
   };
@@ -151,29 +199,48 @@ const HomeScreen = ({ navigation }) => {
     Alert.alert('More Items', 'Navigate to more items');
   };
 
-  const handleFavoritePress = (itemId) => {
-    Alert.alert('Favorite', 'Item added to favorites');
+  const handleWishListPress = (itemId) => {
+    navigation.navigate('WishList');
   };
 
   const handleItemPress = (item) => {
     Alert.alert(item.name, 'Navigate to item details');
   };
 
-  const handleScroll = (event) => {
-    const scrollPosition = event.nativeEvent.contentOffset.x;
-    const index = Math.round(scrollPosition / width);
-    setCurrentSlideIndex(index);
+  const handleManualSlide = (index) => {
+    if (index === currentSlideIndex) return;
+    
+    // Fade out
+    Animated.parallel([
+      Animated.timing(fadeAnim, {
+        toValue: 0,
+        duration: 500,
+        useNativeDriver: true,
+      }),
+      Animated.timing(slideAnim, {
+        toValue: index > currentSlideIndex ? -20 : 20,
+        duration: 500,
+        useNativeDriver: true,
+      }),
+    ]).start(() => {
+      // Change image
+      setCurrentSlideIndex(index);
+      
+      // Fade in
+      Animated.parallel([
+        Animated.timing(fadeAnim, {
+          toValue: 1,
+          duration: 500,
+          useNativeDriver: true,
+        }),
+        Animated.timing(slideAnim, {
+          toValue: 0,
+          duration: 500,
+          useNativeDriver: true,
+        }),
+      ]).start();
+    });
   };
-
-  const renderSlideItem = ({ item }) => (
-    <View style={styles.slideItem}>
-      <Image 
-        source={item.image} 
-        style={styles.slideImage}
-        resizeMode="cover"
-      />
-    </View>
-  );
 
   const renderDotIndicators = () => (
     <>
@@ -185,16 +252,20 @@ const HomeScreen = ({ navigation }) => {
       
       <View style={styles.dotContainer}>
         {sliderImages.map((_, index) => (
-          <View
+          <TouchableOpacity
             key={index}
-            style={[styles.dot, currentSlideIndex === index && styles.activeDot]}
-          />
+            onPress={() => handleManualSlide(index)}
+            activeOpacity={0.7}
+          >
+            <View
+              style={[styles.dot, currentSlideIndex === index && styles.activeDot]}
+            />
+          </TouchableOpacity>
         ))}
       </View>
     </>
   );
 
-  // Render each trending item card - Updated with glass morphism
   const renderTrendingItem = ({ item }) => (
     <TouchableOpacity 
       style={styles.trendingCard}
@@ -208,7 +279,6 @@ const HomeScreen = ({ navigation }) => {
           resizeMode="cover"
         />
         
-        {/* Favorite Icon with Circle BG */}
         <TouchableOpacity 
           style={styles.favoriteIconContainer}
           onPress={() => handleFavoritePress(item.id)}
@@ -262,47 +332,50 @@ const HomeScreen = ({ navigation }) => {
           showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.scrollContent}
         >
-          <View style={styles.header}>
-            <View style={styles.leftCol}>
-              <Image source={logoImage} style={styles.logo} resizeMode="contain" />
-              
-              <View style={styles.locationBlock}>
-                <TouchableOpacity style={styles.locationTouch}>
-                  <MaterialIcons name="location-on" size={20} color="#FFECB2" />
-                  <Text style={styles.locationText}>Bangalore</Text>
-                </TouchableOpacity>
-                
-                <TouchableOpacity>
-                  <Text style={styles.updateText}>Update location</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
+<View style={styles.header}>
+  <View style={styles.leftCol}>
+    <Image source={logoImage} style={styles.logo} resizeMode="contain" />
+    
+    <View style={styles.locationBlock}>
+      <TouchableOpacity style={styles.locationTouch}>
+        <MaterialIcons name="location-on" size={30} color="#000000" />
+        <View style={styles.locationTextContainer}>
+          <Text style={styles.locationText}>Delivery To Bangalore,560001</Text>
+          <TouchableOpacity onPress={() => Alert.alert('Update Location', 'Update location pressed')}>
+            <Text style={styles.updateText}>Update location</Text>
+          </TouchableOpacity>
+        </View>
+      </TouchableOpacity>
+    </View>
+  </View>
 
-            <View style={styles.rightCol}>
-              <View style={styles.iconGroup}>
-                <TouchableOpacity style={styles.actionIconContainer}>
-                  <View style={styles.blackCircle}>
-                    <Image 
-                      source={actionIcons.heart}
-                      style={styles.actionIcon}
-                      resizeMode="contain"
-                    />
-                  </View>
-                </TouchableOpacity>
-                
-                <TouchableOpacity style={styles.actionIconContainer}>
-                  <View style={styles.blackCircle}>
-                    <Image 
-                      source={actionIcons.cart}
-                      style={styles.actionIcon}
-                      resizeMode="contain"
-                    />
-                  </View>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </View>
-
+  <View style={styles.rightCol}>
+    <View style={styles.iconGroup}>
+<TouchableOpacity 
+  style={styles.actionIconContainer}
+  onPress={() => navigation.navigate('WishList')}  
+>
+  <View style={styles.blackCircle}>
+    <Image 
+      source={actionIcons.heart}
+      style={styles.actionIcon}
+      resizeMode="contain"
+    />
+  </View>
+</TouchableOpacity>
+      
+      <TouchableOpacity style={styles.actionIconContainer}>
+        <View style={styles.blackCircle}>
+          <Image 
+            source={actionIcons.cart}
+            style={styles.actionIcon}
+            resizeMode="contain"
+          />
+        </View>
+      </TouchableOpacity>
+    </View>
+  </View>
+</View>
           <View style={styles.searchRow}>
             <View style={styles.searchContainer}>
               <Feather name="search" size={20} color="#999" style={styles.searchIcon} />
@@ -325,21 +398,22 @@ const HomeScreen = ({ navigation }) => {
             </TouchableOpacity>
           </View>
 
-          {/* Image Slider */}
           <View style={styles.sliderContainer}>
-            <FlatList
-              ref={flatListRef}
-              data={sliderImages}
-              renderItem={renderSlideItem}
-              keyExtractor={(item) => item.id}
-              horizontal
-              pagingEnabled
-              showsHorizontalScrollIndicator={false}
-              onScroll={handleScroll}
-              scrollEventThrottle={16}
-              decelerationRate="fast"
-              style={styles.flatList}
-            />
+            <Animated.View 
+    style={[
+      styles.slideItem,
+      {
+        opacity: fadeAnim,
+        transform: [{ translateX: slideAnim }]
+      }
+    ]}
+  >
+    <Image 
+      source={sliderImages[currentSlideIndex].image} 
+      style={styles.slideImage}
+      resizeMode="cover"
+    />
+  </Animated.View>
             {renderDotIndicators()}
             
             {/* Action Buttons */}
@@ -497,7 +571,6 @@ const HomeScreen = ({ navigation }) => {
     </TouchableOpacity>
   </View>
 
-  {/* Steps */}
   <View style={styles.howStepsContainer}>
     {/* Step 1 */}
     <View style={styles.howStep}>
@@ -505,15 +578,17 @@ const HomeScreen = ({ navigation }) => {
         <Feather name="search" size={28} color="#FFFFFF" />
       </View>
       <Text style={styles.howStepTitle}>Discover</Text>
-      <Text style={styles.howStepDesc } numberOfLines={3}>
+      <Text style={styles.howStepDesc} numberOfLines={3}>
         Browse thousands of{'\n'}designer outfits curated for{'\n'}every special occasion.
       </Text>
     </View>
 
-    {/* Arrow */}
-    <View style={styles.howArrow}>
-      <Feather name="arrow-down" size={24} color="#555555" />
-    </View>
+    {/* Curved Arrow RIGHT (Step 1 → Step 2) */}
+    <CurvedArrowLeft
+  width={170}
+  height={190}
+  style={styles.curvedArrowRight}
+/>
 
     {/* Step 2 */}
     <View style={styles.howStep}>
@@ -526,10 +601,13 @@ const HomeScreen = ({ navigation }) => {
       </Text>
     </View>
 
-    {/* Arrow */}
-    <View style={styles.howArrow}>
-      <Feather name="arrow-down" size={24} color="#555555" />
-    </View>
+    {/* Curved Arrow LEFT (Step 2 → Step 3) */}
+   {/* After */}
+<CurvedArrowRight
+  width={170}
+  height={190}
+  style={styles.curvedArrowLeft}
+/>
 
     {/* Step 3 */}
     <View style={styles.howStep}>
@@ -681,34 +759,42 @@ const HomeScreen = ({ navigation }) => {
   showsHorizontalScrollIndicator={false}
   contentContainerStyle={styles.reviewsListContent}
   renderItem={({ item }) => (
-    <View style={styles.reviewCard}>
-  <View style={styles.reviewCardTop}>
-    <Image
-      source={item.avatar}
-      style={styles.reviewAvatar}
-      resizeMode="cover"
-    />
-    <View style={styles.reviewMeta}>
-      <Text style={styles.reviewName}>{item.name}</Text>
-      <Text style={styles.reviewLocation}>{item.location}</Text>
-    </View>
-  </View>
+    <LinearGradient
+      colors={['#FDFDF5', '#f7eac1']}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 0, y: 1 }}
+      style={styles.reviewCard}
+    >
+      <View style={styles.reviewCardTop}>
+        <Image
+          source={item.avatar}
+          style={styles.reviewAvatar}
+          resizeMode="cover"
+        />
+        <View style={styles.reviewMeta}>
+          <Text style={styles.reviewName}>{item.name}</Text>
+          <Text style={styles.reviewLocation}>{item.location}</Text>
+        </View>
+      </View>
 
-  <View style={styles.reviewStars}>
-    {[1, 2, 3, 4, 5].map((star) => (
-      <Feather
-        key={star}
-        name="star"
-        size={16}
-        color={star <= item.rating ? '#000000' : '#CCCCCC'}
-        style={{ marginRight: 3 }}
-      />
-    ))}
-  </View>
+      <View style={styles.reviewStars}>
+        {[1, 2, 3, 4, 5].map((star) => (
+          <Feather
+            key={star}
+            name="star"
+            size={16}
+            color={star <= item.rating ? '#000000' : '#CCCCCC'}
+            style={{ marginRight: 3 }}
+          />
+        ))}
+      </View>
 
-  <Text style={styles.reviewQuote}>"</Text>
-  <Text style={styles.reviewText}>{item.text}</Text>
-</View>
+    {/* Replace the reviewQuoteContainer + reviewText blocks with this */}
+<Text style={styles.reviewText}>
+  <Text style={styles.reviewQuote}>{`\u201C`}</Text>
+  {item.text}
+</Text>
+    </LinearGradient>
   )}
 />
 
@@ -803,48 +889,50 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     paddingBottom: 20,
   },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingHorizontal: 20,
-    paddingTop: 4,
-    paddingBottom: 12,
-  },
-  leftCol: {
-    flex: 1,
-  },
-  logo: {
-    width: 100,
-    height: 40,
-    marginTop: -4,
-    marginBottom: 4,
-  },
-  locationBlock: {
-    marginLeft: 2,
-    marginTop: -4,
-  },
-  locationTouch: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 2,
-  },
-  locationText: {
-    fontSize: 16,
-    fontFamily: 'Monrope-SemiBold',
-    color: '#333',
-    marginLeft: 6,
-    marginTop: -2,
-  },
-  updateText: {
-    fontSize: 13,
-    fontFamily: 'Monrope-Medium',
-    color: '#666',
-    textDecorationLine: 'underline',
-    marginLeft: 26,
-    marginTop: -2,
-  },
+// Update these styles in your StyleSheet
+header: {
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+   alignItems: 'flex-start',
+  paddingHorizontal: 20,
+  paddingTop: 4,
+  paddingBottom: 12,
+},
+leftCol: {
+  flex: 1,
+},
+logo: {
+  width: 100,
+  height: 40,
+  marginTop: -4,
+  marginBottom: 8,
+},
+locationBlock: {
+  marginTop: 4,
+},
+locationTouch: {
+  flexDirection: 'row',
+  alignItems: 'flex-start',
+},
+locationTextContainer: {
+  flex: 1,
+  marginLeft: 6,
+},
+locationText: {
+  fontSize: 16,
+  fontFamily: 'Monrope-SemiBold',
+  color: '#333',
+  marginBottom: 2,
+},
+updateText: {
+  fontSize: 13,
+  fontFamily: 'Monrope-Medium',
+  color: '#666',
+  textDecorationLine: 'underline',
+},
   rightCol: {
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
+    paddingTop: 50
   },
   iconGroup: {
     flexDirection: 'row',
@@ -918,7 +1006,7 @@ const styles = StyleSheet.create({
     color: '#ffffff',
   },
   sliderContainer: {
-    height: height * 0.7,
+    height: height * 0.8,
     width: width,
     marginBottom: 20,
     position: 'relative',
@@ -1330,10 +1418,26 @@ howStepDesc: {
   textAlign: 'center',
   lineHeight: 22,
 },
-howArrow: {
-  marginVertical: 20,
+curvedArrowRight: {
+  width: 180,
+  height: 180,
+  alignSelf: 'flex-start',
+  marginLeft: 70,
+  position: 'relative',
+  top: 30,  
+  marginTop: -20,  
+  marginBottom: -80, 
 },
-
+curvedArrowLeft: {
+  width: 150,
+  height: 150,
+  alignSelf: 'flex-end',
+  marginRight: 50,
+  position: 'relative',
+  top: 90,  
+  marginTop: -20,  // Counteract the space (same as top value)
+  marginBottom: -80, // Adjust to create proper spacing
+},
 browseOccasionHeader: {
   flexDirection: 'row',
   justifyContent: 'space-between',
@@ -1412,7 +1516,7 @@ whyChooseIcon: {
   width: 64,
   height: 64,
   marginBottom: 16,
-  tintColor: '#FFFFFF',   // remove this if your icons already have color
+  tintColor: '#FFFFFF',   
 },
 whyChooseItemTitle: {
   fontSize: 22,
@@ -1452,25 +1556,23 @@ reviewsListContent: {
   paddingBottom: 10,
   gap: 12,
 },
+
 reviewCard: {
   width: width * 0.45,
-  backgroundColor: '#FDFDF5',  
-  borderRadius: 0,               
+  borderRadius: 0,
   padding: 20,
-  borderWidth: 1,
+  borderWidth: 0,
   borderColor: '#EEEEEE',
-  shadowColor: '#000',
-  shadowOffset: { width: 0, height: 2 },
-  shadowOpacity: 0.06,
-  shadowRadius: 4,
-  elevation: 2,
-  minHeight: 280,                // taller card
+  minHeight: 280,
 },
+
 reviewCardTop: {
   flexDirection: 'row',
   alignItems: 'center',
   marginBottom: 16,
+  zIndex: 1,
 },
+
 reviewAvatar: {
   width: 56,
   height: 56,
@@ -1478,37 +1580,47 @@ reviewAvatar: {
   marginRight: 12,
   backgroundColor: '#E0E0E0',
 },
+
 reviewMeta: {
   flex: 1,
+  zIndex: 1,
 },
+
 reviewName: {
   fontSize: 16,
   fontFamily: 'Monrope-SemiBold',
   color: '#111111',
   marginBottom: 4,
 },
+
 reviewLocation: {
-  fontSize: 12,
+  fontSize: 10,
   fontFamily: 'Monrope-Regular',
   color: '#888888',
 },
+
 reviewStars: {
   flexDirection: 'row',
   alignItems: 'center',
-  marginBottom: 16,
+  marginBottom: 12,
+  zIndex: 1,
 },
+
+
 reviewQuote: {
   fontSize: 40,
-  color: '#CCCCCC',
   fontFamily: 'Monrope-Bold',
-  lineHeight: 36,
-  marginBottom: 8,
+  color: '#000000',
+  lineHeight: 30,
+  opacity: 0.8,
 },
+
 reviewText: {
   fontSize: 13,
   fontFamily: 'Monrope-Regular',
   color: '#444444',
-  lineHeight: 22,
+  lineHeight:20 ,
+  zIndex: 1,
 },
 
 footer: {
