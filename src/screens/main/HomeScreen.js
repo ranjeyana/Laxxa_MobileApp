@@ -141,7 +141,6 @@ const HomeScreen = ({ navigation }) => {
 
     useEffect(() => {
     const interval = setInterval(() => {
-      // Fade out
       Animated.parallel([
         Animated.timing(fadeAnim, {
           toValue: 0,
@@ -154,12 +153,10 @@ const HomeScreen = ({ navigation }) => {
           useNativeDriver: true,
         }),
       ]).start(() => {
-        // Change image
         setCurrentSlideIndex((prevIndex) => 
           prevIndex === sliderImages.length - 1 ? 0 : prevIndex + 1
         );
         
-        // Fade in
         Animated.parallel([
           Animated.timing(fadeAnim, {
             toValue: 1,
@@ -173,7 +170,7 @@ const HomeScreen = ({ navigation }) => {
           }),
         ]).start();
       });
-    }, 4000); // Change every 4 seconds
+    }, 4000); 
 
     return () => clearInterval(interval);
   }, [sliderImages.length]);
@@ -210,7 +207,6 @@ const HomeScreen = ({ navigation }) => {
   const handleManualSlide = (index) => {
     if (index === currentSlideIndex) return;
     
-    // Fade out
     Animated.parallel([
       Animated.timing(fadeAnim, {
         toValue: 0,
@@ -223,10 +219,8 @@ const HomeScreen = ({ navigation }) => {
         useNativeDriver: true,
       }),
     ]).start(() => {
-      // Change image
       setCurrentSlideIndex(index);
       
-      // Fade in
       Animated.parallel([
         Animated.timing(fadeAnim, {
           toValue: 1,
@@ -292,12 +286,10 @@ const HomeScreen = ({ navigation }) => {
           </View>
         </TouchableOpacity>
 
-        {/* Size Badge with Glass Morphism - Rounded */}
         <BlurView intensity={30} tint="light" style={styles.sizeBadge}>
           <Text style={styles.sizeText}>{item.sizes.join(' · ')}</Text>
         </BlurView>
 
-        {/* Rating with Glass Morphism - Rounded */}
         <BlurView intensity={30} tint="light" style={styles.imageRatingContainer}>
           <Image 
             source={actionIcons.star}
@@ -309,7 +301,6 @@ const HomeScreen = ({ navigation }) => {
         </BlurView>
       </View>
 
-      {/* Item Name below the image */}
       <View style={styles.cardFooter}>
         <Text 
           style={styles.itemName} 
@@ -416,7 +407,6 @@ const HomeScreen = ({ navigation }) => {
   </Animated.View>
             {renderDotIndicators()}
             
-            {/* Action Buttons */}
             <View style={styles.actionButtonsContainer}>
               <TouchableOpacity 
                 style={[styles.actionButton, styles.rentButton]}
@@ -438,7 +428,6 @@ const HomeScreen = ({ navigation }) => {
             </View>
           </View>
 
-          {/* Trending Section */}
           <View style={styles.trendingSection}>
             <View style={styles.trendingHeader}>
               <TouchableOpacity 
@@ -457,7 +446,6 @@ const HomeScreen = ({ navigation }) => {
               </TouchableOpacity>
             </View>
             
-            {/* Horizontal Scrollable Cards - 2 cards visible */}
             <FlatList
               data={trendingItems}
               renderItem={renderTrendingItem}
@@ -478,7 +466,6 @@ const HomeScreen = ({ navigation }) => {
           <View style={{ height: 20 }} />
 
 <View style={styles.imageGridSection}>
-  {/* Single Image 1 - Full width */}
   <TouchableOpacity 
     style={styles.fullWidthImageContainer}
     onPress={() => Alert.alert('Single Image 1', 'Navigate to single image 1')}
@@ -491,7 +478,6 @@ const HomeScreen = ({ navigation }) => {
     />
   </TouchableOpacity>
 
-  {/* Double Images Row */}
   <View style={styles.doubleImageRow}>
     <TouchableOpacity 
       style={[styles.halfImageContainer, styles.leftHalfImage]}
@@ -518,7 +504,6 @@ const HomeScreen = ({ navigation }) => {
     </TouchableOpacity>
   </View>
 
-  {/* Single Image 2 - Full width */}
 <TouchableOpacity 
   style={[styles.fullWidthImageContainer, { height: 160 }]}  // reduced from 220
   onPress={() => Alert.alert('Single Image 2', 'Navigate to single image 2')}
@@ -531,7 +516,6 @@ const HomeScreen = ({ navigation }) => {
   />
 </TouchableOpacity>
 
-  {/* Double Images Row 2 */}
   <View style={styles.doubleImageRow}>
     <TouchableOpacity 
       style={[styles.halfImageContainer, styles.leftHalfImage, {height: 220}]}
@@ -559,9 +543,7 @@ const HomeScreen = ({ navigation }) => {
   </View>
 </View>
 
-{/* How It Works Section */}
 <View style={styles.howItWorksSection}>
-  {/* Tab Switcher */}
   <View style={styles.howItWorksTabs}>
     <TouchableOpacity style={[styles.howTab, styles.howTabActive]}>
       <Text style={styles.howTabActiveText}>For Renters</Text>
@@ -572,7 +554,6 @@ const HomeScreen = ({ navigation }) => {
   </View>
 
   <View style={styles.howStepsContainer}>
-    {/* Step 1 */}
     <View style={styles.howStep}>
       <View style={styles.howIconBox}>
         <Feather name="search" size={28} color="#FFFFFF" />
@@ -583,14 +564,12 @@ const HomeScreen = ({ navigation }) => {
       </Text>
     </View>
 
-    {/* Curved Arrow RIGHT (Step 1 → Step 2) */}
     <CurvedArrowLeft
   width={170}
   height={190}
   style={styles.curvedArrowRight}
 />
 
-    {/* Step 2 */}
     <View style={styles.howStep}>
       <View style={styles.howIconBox}>
         <Feather name="calendar" size={28} color="#FFFFFF" />
@@ -601,15 +580,13 @@ const HomeScreen = ({ navigation }) => {
       </Text>
     </View>
 
-    {/* Curved Arrow LEFT (Step 2 → Step 3) */}
-   {/* After */}
+
 <CurvedArrowRight
   width={170}
   height={190}
   style={styles.curvedArrowLeft}
 />
 
-    {/* Step 3 */}
     <View style={styles.howStep}>
       <View style={styles.howIconBox}>
         <Feather name="shopping-bag" size={28} color="#FFFFFF" />
@@ -622,7 +599,6 @@ const HomeScreen = ({ navigation }) => {
   </View>
 </View>
 
-{/* Browse by Occasion Header */}
 <View style={styles.browseOccasionHeader}>
   <TouchableOpacity 
     style={styles.browseOccasionButton}
@@ -640,7 +616,6 @@ const HomeScreen = ({ navigation }) => {
   </TouchableOpacity>
 </View>
 
-{/* Browse by Occasion Grid */}
 <View style={styles.occasionGrid}>
   <View style={styles.occasionRow}>
     <TouchableOpacity 
@@ -695,7 +670,6 @@ const HomeScreen = ({ navigation }) => {
   </View>
 </View>
 
-{/* Why Choose Us Section */}
 <ImageBackground
   source={require('../../../assets/images/home/why-choose-us/why-bg.png')}
   style={styles.whyChooseSection}
@@ -704,7 +678,6 @@ const HomeScreen = ({ navigation }) => {
   <View style={styles.whyChooseOverlay}>
     <Text style={styles.whyChooseTitle}>Why Choose Us</Text>
 
-    {/* Item 1 */}
     <View style={styles.whyChooseItem}>
       <Image 
         source={require('../../../assets/images/home/why-choose-us/why-authentic.png')}
@@ -717,7 +690,6 @@ const HomeScreen = ({ navigation }) => {
       </Text>
     </View>
 
-    {/* Item 2 */}
     <View style={styles.whyChooseItem}>
       <Image 
         source={require('../../../assets/images/home/why-choose-us/why-cleaning.png')}
@@ -730,7 +702,6 @@ const HomeScreen = ({ navigation }) => {
       </Text>
     </View>
 
-    {/* Item 3 */}
     <View style={styles.whyChooseItem}>
       <Image 
         source={require('../../../assets/images/home/why-choose-us/why-support.png')}
@@ -745,7 +716,6 @@ const HomeScreen = ({ navigation }) => {
   </View>
 </ImageBackground>
 
-{/* Customer Reviews Section */}
 <View style={styles.reviewsHeader}>
   <View style={styles.reviewsTitleButton}>
     <Text style={styles.reviewsTitleText}>Customer Reviews</Text>
@@ -789,7 +759,6 @@ const HomeScreen = ({ navigation }) => {
         ))}
       </View>
 
-    {/* Replace the reviewQuoteContainer + reviewText blocks with this */}
 <Text style={styles.reviewText}>
   <Text style={styles.reviewQuote}>{`\u201C`}</Text>
   {item.text}
@@ -798,25 +767,20 @@ const HomeScreen = ({ navigation }) => {
   )}
 />
 
-{/* Footer */}
 <View style={styles.footer}>
-  {/* Logo */}
   <Image
     source={require('../../../assets/images/Laxxa.png')}
     style={styles.footerLogo}
     resizeMode="contain"
   />
 
-  {/* Tagline */}
   <Text style={styles.footerTagline}>
     Redefining fashion consumption{'\n'}through sustainable luxury rentals
   </Text>
 
   <View style={styles.footerDivider} />
 
-  {/* Two column links */}
   <View style={styles.footerLinksRow}>
-    {/* Left Column */}
     <View style={styles.footerLinksCol}>
       {['Wedding Wear', 'Evening Gowns', 'Sherwanis', 'Designer Dresses', 'Traditional Wear'].map((item) => (
         <TouchableOpacity key={item} onPress={() => Alert.alert(item)}>
@@ -825,7 +789,6 @@ const HomeScreen = ({ navigation }) => {
       ))}
     </View>
 
-    {/* Right Column */}
     <View style={styles.footerLinksCol}>
       {['About Us', 'How it Works', 'Lender Program', 'Blog', 'FAQs', 'Contact'].map((item) => (
         <TouchableOpacity key={item} onPress={() => Alert.alert(item)}>
@@ -837,7 +800,6 @@ const HomeScreen = ({ navigation }) => {
 
   <View style={styles.footerDivider} />
 
-  {/* Policy Links */}
   <View style={styles.footerPolicyCol}>
     {['Terms of Service', 'Privacy Policy', 'Refund Policy', 'Damage Policy', 'Cookie Policy'].map((item) => (
       <TouchableOpacity key={item} onPress={() => Alert.alert(item)}>
@@ -889,7 +851,6 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     paddingBottom: 20,
   },
-// Update these styles in your StyleSheet
 header: {
   flexDirection: 'row',
   justifyContent: 'space-between',
@@ -1106,7 +1067,6 @@ updateText: {
     textShadowRadius: 4,
   },
   
-  // Trending Section Styles
   trendingSection: {
     paddingHorizontal: 20,
     marginTop: 20,
@@ -1435,8 +1395,8 @@ curvedArrowLeft: {
   marginRight: 50,
   position: 'relative',
   top: 90,  
-  marginTop: -20,  // Counteract the space (same as top value)
-  marginBottom: -80, // Adjust to create proper spacing
+  marginTop: -20,  
+  marginBottom: -80, 
 },
 browseOccasionHeader: {
   flexDirection: 'row',

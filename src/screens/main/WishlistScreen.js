@@ -75,15 +75,12 @@ const FavoritesScreen = ({ navigation }) => {
 
   const handleEditPress = () => {
     if (isEditMode) {
-      // If in edit mode and has selected items, delete them
       if (selectedItems.length > 0) {
         setDeleteModalVisible(true);
       } else {
-        // Just exit edit mode
         setIsEditMode(false);
       }
     } else {
-      // Enter edit mode
       setIsEditMode(true);
       setSelectedItems([]);
     }
@@ -95,7 +92,6 @@ const FavoritesScreen = ({ navigation }) => {
 
   const handleCardPress = (item) => {
     if (isEditMode) {
-      // Toggle selection
       if (selectedItems.includes(item.id)) {
         setSelectedItems(selectedItems.filter(id => id !== item.id));
       } else {
@@ -120,7 +116,6 @@ const FavoritesScreen = ({ navigation }) => {
   const handleMoveToCart = (item) => {
     if (!isEditMode) {
       console.log('Move to cart:', item);
-      // Add to cart logic here
     }
   };
 
@@ -134,7 +129,6 @@ const FavoritesScreen = ({ navigation }) => {
         activeOpacity={0.7}
         disabled={!isEditMode}
       >
-        {/* Image Container with overlays */}
         <View style={styles.imageContainer}>
           <Image 
             source={item.image} 
@@ -142,7 +136,6 @@ const FavoritesScreen = ({ navigation }) => {
             resizeMode="cover"
           />
           
-          {/* Delete/Selection Icon - Top Right */}
           <TouchableOpacity 
             style={styles.selectionIcon}
             onPress={() => {
@@ -154,12 +147,10 @@ const FavoritesScreen = ({ navigation }) => {
             activeOpacity={0.8}
           >
             {isEditMode ? (
-              // Selection circle with checkmark in edit mode
               <View style={[styles.circle, isSelected && styles.circleSelected]}>
                 {isSelected && <Feather name="check" size={14} color="#FFFFFF" />}
               </View>
             ) : (
-              // Delete icon when not in edit mode
               <Image 
                 source={require('../../../assets/images/wishlist/icons/delete.png')}
                 style={styles.iconImage}
@@ -168,19 +159,16 @@ const FavoritesScreen = ({ navigation }) => {
             )}
           </TouchableOpacity>
           
-          {/* Size Badge - Bottom Left with Glassmorphism */}
           <View style={styles.sizeBadge}>
             <Text style={styles.sizeText}>{item.size}</Text>
           </View>
           
-          {/* Rating Badge - Bottom Right with Glassmorphism */}
           <View style={styles.ratingBadge}>
             <FontAwesome name="star" size={12} color="#000000" />
             <Text style={styles.ratingText}>{item.rating}</Text>
           </View>
         </View>
         
-        {/* Product Details */}
         <View style={styles.productDetails}>
           <View style={styles.brandPriceRow}>
             <Text style={styles.brandName}>{item.brand}</Text>
@@ -192,7 +180,6 @@ const FavoritesScreen = ({ navigation }) => {
           <Text style={styles.productName} numberOfLines={2}>{item.name}</Text>
         </View>
         
-        {/* Move to Cart Button */}
         <TouchableOpacity 
           style={styles.cartButton}
           onPress={() => handleMoveToCart(item)}
@@ -213,7 +200,6 @@ const FavoritesScreen = ({ navigation }) => {
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
       
-      {/* Header */}
       <View style={styles.header}>
         <View style={styles.headerLeft}>
           <TouchableOpacity 
@@ -254,7 +240,6 @@ const FavoritesScreen = ({ navigation }) => {
         </View>
       </View>
 
-      {/* Filter Options */}
       {!isEditMode && (
         <View style={styles.filterContainer}>
           <ScrollView 
@@ -284,7 +269,6 @@ const FavoritesScreen = ({ navigation }) => {
         </View>
       )}
 
-      {/* Wishlist Grid */}
       {wishlistItems.length > 0 ? (
         <FlatList
           data={wishlistItems}
@@ -424,7 +408,6 @@ const styles = StyleSheet.create({
     height: 20,
     tintColor: '#FFFFFF',
   },
-  // Filter Styles
   filterContainer: {
     backgroundColor: '#FFFFFF',
     paddingVertical: 12,
@@ -452,7 +435,6 @@ const styles = StyleSheet.create({
   filterChipTextActive: {
     color: '#FFFFFF',
   },
-  // Grid Styles
   gridContent: {
     paddingHorizontal: 20,
     paddingTop: 16,
@@ -508,7 +490,6 @@ const styles = StyleSheet.create({
     width: 18,
     height: 18,
   },
-  // Glassmorphism styles for Size Badge
   sizeBadge: {
     position: 'absolute',
     bottom: 8,
@@ -533,7 +514,6 @@ const styles = StyleSheet.create({
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 2,
   },
-  // Glassmorphism styles for Rating Badge
   ratingBadge: {
     position: 'absolute',
     bottom: 8,
@@ -677,7 +657,6 @@ const styles = StyleSheet.create({
     fontFamily: 'Monrope-Medium',
     color: '#FFFFFF',
   },
-  // Modal Styles
   modalOverlay: {
     flex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.5)',

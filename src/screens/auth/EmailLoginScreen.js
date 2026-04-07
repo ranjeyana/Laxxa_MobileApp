@@ -54,7 +54,6 @@ const EmailLoginScreen = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Back button - positioned absolutely to stay at top */}
       <TouchableOpacity 
         style={styles.backButton}
         onPress={handleBack}
@@ -63,7 +62,6 @@ const EmailLoginScreen = ({ navigation }) => {
         <SimpleLineIcons name="arrow-left" size={20} color="#333" />
       </TouchableOpacity>
 
-      {/* Logo at the top - positioned absolutely */}
       <View style={styles.logoContainer}>
         <Image 
           source={logoImage} 
@@ -72,9 +70,7 @@ const EmailLoginScreen = ({ navigation }) => {
         />
       </View>
 
-      {/* Centered content area */}
       <View style={styles.centerContent}>
-        {/* Email Input */}
         <View style={styles.inputContainer}>
           <Text style={styles.inputLabel}>Email Address</Text>
           <View style={styles.inputWrapper}>
@@ -93,7 +89,6 @@ const EmailLoginScreen = ({ navigation }) => {
         </View>
 
 
-        {/* Continue Button */}
         <TouchableOpacity
           style={[
             styles.continueButton,
@@ -107,7 +102,6 @@ const EmailLoginScreen = ({ navigation }) => {
         </TouchableOpacity>
       </View>
 
-      {/* Terms & Privacy at the bottom - positioned absolutely */}
       <TouchableOpacity 
         onPress={handleTerms}
         activeOpacity={0.7}
